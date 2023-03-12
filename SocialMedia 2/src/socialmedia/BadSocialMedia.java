@@ -58,20 +58,37 @@ public class BadSocialMedia implements SocialMediaPlatform {
 	@Override
 	public void changeAccountHandle(String oldHandle, String newHandle)
 			throws HandleNotRecognisedException, IllegalHandleException, InvalidHandleException {
-		// TODO Auto-generated method stub
+		for (User user : allUsers) {
+            if (oldHandle == user.getHandle()) {
+                user.handle = newHandle;
+            }
+        }
 
 	}
 
 	@Override
 	public void updateAccountDescription(String handle, String description) throws HandleNotRecognisedException {
-		// TODO Auto-generated method stub
-
-	}
+		for (User user : allUsers) {
+			if (user.getHandle() == handle) {
+                user.description = description;
+	        }
+        }
+    }
 
 	@Override
 	public String showAccount(String handle) throws HandleNotRecognisedException {
-		// TODO Auto-generated method stub
-		return null;
+		String output;
+        for (User user : allUsers) {
+			if (user.getHandle() == handle) {
+                output = "ID: " + user.getId() +"\nHandle: " 
+                + user.getHandle() +"\nDescription: " + user.getDescription() 
+                + "\nPost count: " +  user.getNumberOfInteractions() + "\nEndorse count: " 
+                + user.getReceivedEndorsment();
+                return output;
+	        }
+            
+        }
+        
 	}
 
 	@Override
@@ -115,8 +132,7 @@ public class BadSocialMedia implements SocialMediaPlatform {
 
 	@Override
 	public int getNumberOfAccounts() {
-		// TODO Auto-generated method stub
-		return 0;
+		return allUsers.size();
 	}
 
 	@Override
@@ -145,14 +161,20 @@ public class BadSocialMedia implements SocialMediaPlatform {
 
 	@Override
 	public int getMostEndorsedAccount() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+        User max = allUsers.get(0);
+        int maxVal = max.getReceivedEndorsment();
+        for (User user : allUsers) {
+            if (user.getReceivedEndorsment()> maxVal){
+                max = user;
+                maxVal = user.getReceivedEndorsment();
+            }
+	    }
+        return max.getId();
+    }
 
 	@Override
 	public void erasePlatform() {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
