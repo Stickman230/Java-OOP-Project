@@ -1,37 +1,57 @@
 package socialmedia;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * BadSocialMedia is a minimally compiling, but non-functioning implementor of
  * the SocialMediaPlatform interface.
  * 
- * @author Diogo Pacheco
+ * @author Diogo Pachec
  * @version 1.0
  */
 public class BadSocialMedia implements SocialMediaPlatform {
+	ArrayList<User> allUsers = new ArrayList<>();
+	static int userCount = 0;
 
 	@Override
 	public int createAccount(String handle) throws IllegalHandleException, InvalidHandleException {
 		// TODO Auto-generated method stub
-		return 0;
+		User newAcc;
+		newAcc = new User(handle);
+		allUsers.add(newAcc);
+		userCount++;
+		return newAcc.getId();
 	}
 
 	@Override
 	public int createAccount(String handle, String description) throws IllegalHandleException, InvalidHandleException {
-		// TODO Auto-generated method stub
-		return 0;
+		// TODO Store the list of users in the social media class.
+		User newAcc;
+		newAcc = new User(handle, description);
+		allUsers.add(newAcc);
+		userCount++;
+		return newAcc.getId();
 	}
 
 	@Override
 	public void removeAccount(int id) throws AccountIDNotRecognisedException {
 		// TODO Auto-generated method stub
-
+		for (User user : allUsers) {
+			if (user.getId() == id) {
+				user.removeAccount();
+			}
+		}
 	}
 
 	@Override
 	public void removeAccount(String handle) throws HandleNotRecognisedException {
 		// TODO Auto-generated method stub
+		for (User user : allUsers) {
+			if (user.getHandle() == handle) {
+				user.removeAccount();
+			}
+		}
 
 	}
 
@@ -147,4 +167,7 @@ public class BadSocialMedia implements SocialMediaPlatform {
 
 	}
 
+	static public int getUserCount() {
+		return userCount;
+	}
 }
