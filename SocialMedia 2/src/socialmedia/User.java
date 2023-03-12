@@ -6,7 +6,7 @@ public class User {
     // Could use map which uses handle to access a User object in O(1) time.
     int id;
     String handle;
-    ArrayList<String> userPosts = new ArrayList<>();
+    ArrayList<Post> userPosts = new ArrayList<>();
     ArrayList<String> userComments = new ArrayList<>();
     ArrayList<String> userEndorsements = new ArrayList<>();
     String description;
@@ -17,6 +17,22 @@ public class User {
 
     public String getHandle() {
         return this.handle;
+    }
+
+    public String getDescription(){
+        return this.description;
+    }
+
+    public int getNumberOfInteractions(){
+        return userPosts.size() + userComments.size() + userEndorsements.size();
+    }
+
+    public int getReceivedEndorsment(){
+        int endcount = 0;
+        for (Post post : userPosts) {
+            endcount += post.postEndorsments.size();
+        }
+        return endcount;
     }
 
     public User(String handle, String description) throws IllegalHandleException {
@@ -37,5 +53,6 @@ public class User {
     public void removeAccount() {
         // TODO Iterate through the User's list of posts and delete all of them.
     }
+
 
 }
