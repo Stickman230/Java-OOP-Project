@@ -21,6 +21,19 @@ public class BadSocialMedia implements SocialMediaPlatform {
 	public int createAccount(String handle) throws IllegalHandleException, InvalidHandleException {
 		// TODO Auto-generated method stub
 		User newAcc;
+		for (User user : allUsers) {
+			if (user.getHandle() == handle){
+				throw new IllegalHandleException("Account handle already in use");
+			}
+		}	
+		if (handle == ""){
+			throw new InvalidHandleException("The handle you provided is empty");
+		} 
+		for (int i = 0; i < handle.length(); i++){
+			if (handle.charAt(i) == ' ' || handle.length() > 100){
+				throw new InvalidHandleException("The handle you provided is incorect");
+			}
+		}
 		newAcc = new User(handle);
 		allUsers.add(newAcc);
 		userCount++;
@@ -31,6 +44,19 @@ public class BadSocialMedia implements SocialMediaPlatform {
 	public int createAccount(String handle, String description) throws IllegalHandleException, InvalidHandleException {
 		// TODO Store the list of users in the social media class.
 		User newAcc;
+		for (User user : allUsers) {
+			if (user.getHandle() == handle){
+				throw new IllegalHandleException("Account handle already in use");
+			}
+		}	
+		if (handle == ""){
+			throw new InvalidHandleException("The handle you provided is empty");
+		} 
+		for (int i = 0; i < handle.length(); i++){
+			if (handle.charAt(i) == ' ' || handle.length() > 100){
+				throw new InvalidHandleException("The handle you provided is incorect");
+			}
+		}
 		newAcc = new User(handle, description);
 		allUsers.add(newAcc);
 		userCount++;
@@ -43,8 +69,9 @@ public class BadSocialMedia implements SocialMediaPlatform {
 		for (User user : allUsers) {
 			if (user.getId() == id) {
 				user.removeAccount();
-			}
+			}			
 		}
+		throw new AccountIDNotRecognisedException("Account Id does not exist in the system");
 	}
 
 	@Override
@@ -53,20 +80,31 @@ public class BadSocialMedia implements SocialMediaPlatform {
 		for (User user : allUsers) {
 			if (user.getHandle() == handle) {
 				user.removeAccount();
-			}
+			}  
 		}
-
+		throw new HandleNotRecognisedException("Handle does not exist in the system");
 	}
 
 	@Override
 	public void changeAccountHandle(String oldHandle, String newHandle)
 			throws HandleNotRecognisedException, IllegalHandleException, InvalidHandleException {
+		if (newHandle == ""){
+			throw new InvalidHandleException("The new handle you provided is empty");
+		} 
+		for (int i = 0; i < newHandle.length(); i++){
+			if (newHandle.charAt(i) == ' ' || newHandle.length() > 100){
+				throw new InvalidHandleException("The new handle you provided is incorect");
+			}
+		}		
 		for (User user : allUsers) {
 			if (oldHandle == user.getHandle()) {
 				user.handle = newHandle;
 			}
+			else if (newHandle == user.getHandle()){
+				throw new IllegalHandleException("Account handle already in the system");
+			}
 		}
-
+		throw new HandleNotRecognisedException("Handle does not exist in the system");
 	}
 
 	@Override
@@ -76,6 +114,7 @@ public class BadSocialMedia implements SocialMediaPlatform {
 				user.description = description;
 			}
 		}
+		throw new HandleNotRecognisedException("Handle does not exist in the system");
 	}
 
 	@Override
@@ -91,8 +130,12 @@ public class BadSocialMedia implements SocialMediaPlatform {
 				break;
 			}
 		}
+		if (output != ""){
+			return output;
+		} else{
+			throw new HandleNotRecognisedException("Handle does not exist in the system");
+		}
 
-		return output;
 	}
 
 	@Override
