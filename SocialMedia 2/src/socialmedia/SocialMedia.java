@@ -147,32 +147,19 @@ public class SocialMedia implements SocialMediaPlatform {
     @Override
     public int createPost(String handle, String message) throws HandleNotRecognisedException, InvalidPostException {
         // TODO Auto-generated method stub
-        Boolean canPost = false;
-        Post newPost = new Post(handle, message);
-        int errType = 0;
-        allPosts.add(newPost);
-        newPost.id = postCount++;
+        if (message == "" || message.length() > 100){
+            throw new InvalidPostException("The messsage you tried to put is not allowed");
+        }
         for (User user : allUsers) {
-            if (handle == user.handle) {
+            if (user.getHandle() == handle) {
+                Post newPost = new Post(handle, message);
+                allPosts.add(newPost);
+                newPost.id = postCount++;
                 user.userPosts.add(newPost);
-                canPost = true;
-                break;
+                return newPost.id;
             }
         }
-        if (message.length() == 0) {
-            canPost = false;
-            errType = 1;
-        }
-        if (canPost) {
-            return newPost.id;
-        } else {
-            this.deletePost(newPost.getId());
-            if (errType == 0) {
-                throw new HandleNotRecognisedException("Provided handle does not exist.");
-            } else {
-                throw new InvalidPostException("Provided message is too long (100 characters max).");
-            }
-        }
+        throw new HandleNotRecognisedException("Handle does not exist in the system");
     }
 
     @Override
