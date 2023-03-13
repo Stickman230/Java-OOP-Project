@@ -49,10 +49,4 @@ public class User {
     public void createPost(String content) {
         // POST CONSTRUCTOR WITH AUTHOR = THIS.HANDLE
     }
-
-    public void removeAccount() {
-        // TODO Iterate through the User's list of posts and delete all of them.
-    }
-
-
 }
