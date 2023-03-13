@@ -87,6 +87,11 @@ public class SocialMedia implements SocialMediaPlatform {
                         System.out.println("Error when deletinh posts associated to account");
                     }
                 }
+                for (Comment comm : user.userComments) {
+                    // TODO delete comment (also remove it from the post's records)
+                }
+
+                // TODO Iterate through list of endorsements.
             }
             throw new HandleNotRecognisedException("Handle does not exist in the system");
         }
