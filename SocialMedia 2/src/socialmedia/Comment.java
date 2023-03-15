@@ -5,6 +5,7 @@ public class Comment extends Post {
     int id;
     Post originalPost;
     String message;
+    static boolean canInteract = false;
 
     public User getAuthor() {
         return this.author;
