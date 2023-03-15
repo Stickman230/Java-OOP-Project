@@ -14,6 +14,18 @@ public class Post {
     public int getId() {
         return this.id;
     }
+    
+    public int getNumberOfEndorsments(){
+        return this.postEndorsments.size();
+    }
+
+    public int getNumberOfComments(){
+        return this.postComments.size();
+    }
+
+    public String getMessage(){
+        return this.message;
+    }
 
     public Post(String author, String message) {
         this.author = author;
