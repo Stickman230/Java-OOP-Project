@@ -1,5 +1,5 @@
 import socialmedia.AccountIDNotRecognisedException;
-import socialmedia.BadSocialMedia;
+import socialmedia.SocialMedia;
 import socialmedia.IllegalHandleException;
 import socialmedia.InvalidHandleException;
 import socialmedia.SocialMediaPlatform;
