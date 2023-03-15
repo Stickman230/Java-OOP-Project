@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * BadSocialMedia is a minimally compiling, but non-functioning implementor of
+ * SocialMedia is a minimally compiling, but non-functioning implementor of
  * the SocialMediaPlatform interface.
  * 
  * @author Diogo Pachec
@@ -89,6 +89,7 @@ public class SocialMedia implements SocialMediaPlatform {
                 }
                 for (Comment comm : user.userComments) {
                     // TODO delete comment (also remove it from the post's records)
+
                 }
 
                 // TODO Iterate through list of endorsements.
@@ -130,7 +131,6 @@ public class SocialMedia implements SocialMediaPlatform {
 
     @Override
     public String showAccount(String handle) throws HandleNotRecognisedException {
-        // TODO ERROR HANDLING FOR UNRECOGNISED HANDLE
         String output = "";
         for (User user : allUsers) {
             if (user.getHandle() == handle) {
@@ -151,8 +151,7 @@ public class SocialMedia implements SocialMediaPlatform {
 
     @Override
     public int createPost(String handle, String message) throws HandleNotRecognisedException, InvalidPostException {
-        // TODO Auto-generated method stub
-        if (message == "" || message.length() > 100){
+        if (message == "" || message.length() > 100) {
             throw new InvalidPostException("The messsage you tried to put is not allowed");
         }
         for (User user : allUsers) {
@@ -188,8 +187,11 @@ public class SocialMedia implements SocialMediaPlatform {
             if (post.getId() == id) {
                 this.allPosts.remove(post);
                 for (Comment comm : post.postComments) {
-                    post.postComments.remove(comm);
-                    comm.getAuthor().userComments.remove(comm);
+                    // post.postComments.remove(comm);
+
+                    // comm.getAuthor().userComments.remove(comm);
+                    comm.message = "The original content was removed from the system and is no longer available.";
+
                 }
                 // TODO ADD SAME FUNCTIONALITY FOR ENDORSEMENTS
 
