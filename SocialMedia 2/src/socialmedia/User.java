@@ -36,13 +36,13 @@ public class User {
     }
 
     public User(String handle, String description) throws IllegalHandleException {
-        this.id = BadSocialMedia.getUserCount();
+        this.id = SocialMedia.getUserCount();
         this.handle = handle;
         this.description = description;
     }
 
     public User(String handle) {
-        this.id = BadSocialMedia.getUserCount();
+        this.id = SocialMedia.getUserCount();
         this.handle = handle;
     }
 
