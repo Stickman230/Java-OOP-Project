@@ -68,7 +68,18 @@ public class SocialMedia implements SocialMediaPlatform {
         // TODO Auto-generated method stub
         for (User user : allUsers) {
             if (user.getId() == id) {
-                user.removeAccount();
+                this.allUsers.remove(user);
+                for (Post post : user.userPosts) {
+                    try {
+                        this.deletePost(post.getId());
+                    } catch (PostIDNotRecognisedException e) {
+                        System.out.println("Error when deleting posts associated to account");
+                    }
+                }
+                for (Comment comm : user.userComments) {
+                    comm.deleteComment();
+                }
+                // TODO Iterate through list of endorsements.
             }
         }
         throw new AccountIDNotRecognisedException("Account Id does not exist in the system");
@@ -84,12 +95,11 @@ public class SocialMedia implements SocialMediaPlatform {
                     try {
                         this.deletePost(post.getId());
                     } catch (PostIDNotRecognisedException e) {
-                        System.out.println("Error when deletinh posts associated to account");
+                        System.out.println("Error when deleting posts associated to account");
                     }
                 }
                 for (Comment comm : user.userComments) {
-                    // TODO delete comment (also remove it from the post's records)
-
+                    comm.deleteComment();
                 }
 
                 // TODO Iterate through list of endorsements.
@@ -156,7 +166,7 @@ public class SocialMedia implements SocialMediaPlatform {
         }
         for (User user : allUsers) {
             if (user.getHandle() == handle) {
-                Post newPost = new Post(handle, message);
+                Post newPost = new Post(user, message);
                 allPosts.add(newPost);
                 newPost.id = postCount++;
                 user.userPosts.add(newPost);
@@ -185,15 +195,20 @@ public class SocialMedia implements SocialMediaPlatform {
         // TODO Auto-generated method stub
         for (Post post : allPosts) {
             if (post.getId() == id) {
-                this.allPosts.remove(post);
+                try {
+                    this.allPosts.remove(post);
+                    post.author.userPosts.remove(post);
+                } catch (Exception e) {
+                    System.out.println("Exception caught: Post not found in System files.");
+                }
                 for (Comment comm : post.postComments) {
-                    // post.postComments.remove(comm);
-
-                    // comm.getAuthor().userComments.remove(comm);
                     comm.message = "The original content was removed from the system and is no longer available.";
-
+                    comm.originalPost = null;
                 }
                 // TODO ADD SAME FUNCTIONALITY FOR ENDORSEMENTS
+
+                post.postComments.clear();
+                post.postEndorsments.clear();
 
                 break;
             }
@@ -203,8 +218,21 @@ public class SocialMedia implements SocialMediaPlatform {
 
     @Override
     public String showIndividualPost(int id) throws PostIDNotRecognisedException {
-        // TODO Auto-generated method stub
-        return null;
+        String output = "";
+        for (Post post : allPosts) {
+            if (post.getId() == id) {
+                output = "ID : " + id + "\nAccount : "
+                        + post.author.getHandle() + "\nNo of endorsements : "
+                        + post.getNumberOfEndorsments() + "\nNo of comments : "
+                        + post.getNumberOfComments() + "\nMessage : " + post.getMessage();
+                break;
+            }
+        }
+        if (output != "") {
+            return output;
+        } else {
+            throw new PostIDNotRecognisedException("Post Id does not exist in the system");
+        }
     }
 
     @Override
