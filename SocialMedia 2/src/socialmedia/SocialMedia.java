@@ -166,9 +166,8 @@ public class SocialMedia implements SocialMediaPlatform {
         }
         for (User user : allUsers) {
             if (user.getHandle() == handle) {
-                Post newPost = new Post(user, message);
+                Post newPost = new Post(user, message, this);
                 allPosts.add(newPost);
-                newPost.id = postCount++;
                 user.userPosts.add(newPost);
                 return newPost.id;
             }
@@ -179,7 +178,13 @@ public class SocialMedia implements SocialMediaPlatform {
     @Override
     public int endorsePost(String handle, int id)
             throws HandleNotRecognisedException, PostIDNotRecognisedException, NotActionablePostException {
-        // TODO Auto-generated method stub
+        for (Post post : allPosts) {
+            if (post.getId() == id) {
+                User author = post.getAuthor();
+                Endorsement newEndorsement = new Endorsement(author, post, this);
+                return newEndorsement.getId();
+            }
+        }
         return 0;
     }
 
@@ -187,6 +192,13 @@ public class SocialMedia implements SocialMediaPlatform {
     public int commentPost(String handle, int id, String message) throws HandleNotRecognisedException,
             PostIDNotRecognisedException, NotActionablePostException, InvalidPostException {
         // TODO Auto-generated method stub
+        for (Post post : allPosts) {
+            if (post.getId() == id) {
+                User author = post.getAuthor();
+                Comment newComment = new Comment(author, message, post, this);
+                return newComment.getId();
+            }
+        }
         return 0;
     }
 
@@ -303,5 +315,9 @@ public class SocialMedia implements SocialMediaPlatform {
 
     static public int getUserCount() {
         return userCount;
+    }
+
+    public int getPostCount() {
+        return this.postCount;
     }
 }
