@@ -24,12 +24,18 @@ public class Post {
         return this.postComments.size();
     }
 
-    public Post(User author, String message) {
+    public Post(User author, String message, SocialMedia socialmedia) {
         this.author = author;
         this.message = message;
+        this.id = socialmedia.getPostCount();
+        socialmedia.postCount++;
     }
 
     public String getMessage() {
         return this.message;
+    }
+
+    public User getAuthor() {
+        return this.author;
     }
 }
