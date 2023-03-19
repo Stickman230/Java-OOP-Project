@@ -299,28 +299,32 @@ public class SocialMedia implements SocialMediaPlatform {
         return allUsers.size();
     }
 
-    @Override
+   @Override
     public int getTotalOriginalPosts() {
-        // TODO Auto-generated method stub
-        return 0;
+        return allPosts.size();
     }
 
     @Override
     public int getTotalEndorsmentPosts() {
-        // TODO Auto-generated method stub
-        return 0;
+        return allEndorsements.size();
     }
 
     @Override
     public int getTotalCommentPosts() {
-        // TODO Auto-generated method stub
-        return 0;
+        return allComments.size();
     }
 
     @Override
     public int getMostEndorsedPost() {
-        // TODO Auto-generated method stub
-        return 0;
+        Post maxPost = allPosts.get(0);
+        int currentMax = maxPost.getNumberOfEndorsments();
+        for (Post post : allPosts) {
+            if (post.getNumberOfEndorsments() > currentMax) {
+                maxPost = post;
+                currentMax = maxPost.getNumberOfEndorsments();
+            }
+        }
+        return maxPost.getId();
     }
 
     @Override
