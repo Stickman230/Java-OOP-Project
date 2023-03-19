@@ -17,6 +17,10 @@ public class SocialMedia implements SocialMediaPlatform {
     ArrayList<Post> allPosts = new ArrayList<>();
     int postCount = 0;
 
+    ArrayList<Comment> allComments = new ArrayList<>();
+    
+    ArrayList<Endorsement> allEndorsements = new ArrayList<>();
+
     @Override
     public int createAccount(String handle) throws IllegalHandleException, InvalidHandleException {
         // TODO Auto-generated method stub
@@ -178,28 +182,64 @@ public class SocialMedia implements SocialMediaPlatform {
     @Override
     public int endorsePost(String handle, int id)
             throws HandleNotRecognisedException, PostIDNotRecognisedException, NotActionablePostException {
+
         for (Post post : allPosts) {
             if (post.getId() == id) {
-                User author = post.getAuthor();
-                Endorsement newEndorsement = new Endorsement(author, post, this);
-                return newEndorsement.getId();
+                for (User user : allUsers) {
+                    if (user.getHandle() == handle){
+                        User author = user;
+                        Endorsement newEndorsement = new Endorsement(author, post, this);
+                        return newEndorsement.getId();
+                    }
+
+                }
+                throw new HandleNotRecognisedException("The handle does not exist in the system");
+            }
+        }for (Comment comment : allComments) {
+            if (comment.getId() == id) {
+                throw new NotActionablePostException("The id you want to use is of a unactionable post");
             }
         }
-        return 0;
+        for (Endorsement endorsement : allEndorsements) {
+            if (endorsement.getId() == id) {
+                throw new NotActionablePostException("The id you want to use is of a unactionable post");
+            }
+        }
+        throw new PostIDNotRecognisedException("The Post Id des nt exist in thne system");
+        
     }
 
     @Override
     public int commentPost(String handle, int id, String message) throws HandleNotRecognisedException,
             PostIDNotRecognisedException, NotActionablePostException, InvalidPostException {
         // TODO Auto-generated method stub
+        if (message.length() > 100 || message == ""){
+            throw new InvalidPostException("The message you inputed is not valid");
+        }
         for (Post post : allPosts) {
             if (post.getId() == id) {
-                User author = post.getAuthor();
-                Comment newComment = new Comment(author, message, post, this);
-                return newComment.getId();
+                for (User user : allUsers) {
+                    if (user.getHandle() == handle){
+                        User author = post.getAuthor();
+                        Comment newComment = new Comment(author, message, post, this);
+                        return newComment.getId();
+                    }
+                }
+                throw new HandleNotRecognisedException("The handle does not exist in the system");
             }
         }
-        return 0;
+        for (Comment comment : allComments) {
+            if (comment.getId() == id) {
+                throw new NotActionablePostException("The id you want to use is of a unactionable post");
+            }
+        }
+        for (Endorsement endorsement : allEndorsements) {
+            if (endorsement.getId() == id) {
+                throw new NotActionablePostException("The id you want to use is of a unactionable post");
+            }
+        }
+        throw new PostIDNotRecognisedException("The Post Id des nt exist in thne system");            
+        
     }
 
     @Override
