@@ -7,8 +7,8 @@ public class User {
     int id;
     String handle;
     ArrayList<Post> userPosts = new ArrayList<>();
-    ArrayList<String> userComments = new ArrayList<>();
-    ArrayList<String> userEndorsements = new ArrayList<>();
+    ArrayList<Comment> userComments = new ArrayList<>();
+    ArrayList<Endorsement> userEndorsements = new ArrayList<>();
     String description;
 
     public int getId() {
