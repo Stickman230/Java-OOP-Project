@@ -4,8 +4,9 @@ import java.util.ArrayList;
 
 public class Post {
     int id;
-    String author;
+    User author;
     String message;
+    static boolean canInteract = true;
 
     // TODO change the types of the list to endorsement and post.
     ArrayList<Post> postEndorsments = new ArrayList<>();
@@ -14,21 +15,21 @@ public class Post {
     public int getId() {
         return this.id;
     }
-    
-    public int getNumberOfEndorsments(){
+
+    public int getNumberOfEndorsments() {
         return this.postEndorsments.size();
     }
 
-    public int getNumberOfComments(){
+    public int getNumberOfComments() {
         return this.postComments.size();
     }
 
-    public String getMessage(){
-        return this.message;
-    }
-
-    public Post(String author, String message) {
+    public Post(User author, String message) {
         this.author = author;
         this.message = message;
+    }
+
+    public String getMessage() {
+        return this.message;
     }
 }
