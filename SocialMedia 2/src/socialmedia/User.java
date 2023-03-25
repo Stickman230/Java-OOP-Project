@@ -19,15 +19,15 @@ public class User {
         return this.handle;
     }
 
-    public String getDescription(){
+    public String getDescription() {
         return this.description;
     }
 
-    public int getNumberOfInteractions(){
+    public int getNumberOfInteractions() {
         return userPosts.size() + userComments.size() + userEndorsements.size();
     }
 
-    public int getReceivedEndorsment(){
+    public int getReceivedEndorsment() {
         int endcount = 0;
         for (Post post : userPosts) {
             endcount += post.postEndorsments.size();
@@ -35,14 +35,14 @@ public class User {
         return endcount;
     }
 
-    public User(String handle, String description) throws IllegalHandleException {
-        this.id = SocialMedia.getUserCount();
+    public User(String handle, String description, SocialMedia platform) throws IllegalHandleException {
+        this.id = platform.getUserCount();
         this.handle = handle;
         this.description = description;
     }
 
-    public User(String handle) {
-        this.id = SocialMedia.getUserCount();
+    public User(String handle, SocialMedia platform) {
+        this.id = platform.getUserCount();
         this.handle = handle;
     }
 
