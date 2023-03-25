@@ -1,6 +1,6 @@
 package socialmedia;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 
 /**
@@ -12,13 +12,12 @@ import java.util.ArrayList;
  */
 public class SocialMedia implements SocialMediaPlatform {
     ArrayList<User> allUsers = new ArrayList<>();
-    static int userCount = 0;
+    int userCount = 0;
 
     ArrayList<Post> allPosts = new ArrayList<>();
     int postCount = 0;
 
     ArrayList<Comment> allComments = new ArrayList<>();
-    
     ArrayList<Endorsement> allEndorsements = new ArrayList<>();
 
     @Override
@@ -38,7 +37,7 @@ public class SocialMedia implements SocialMediaPlatform {
                 throw new InvalidHandleException("The handle you provided is incorect");
             }
         }
-        newAcc = new User(handle);
+        newAcc = new User(handle, this);
         allUsers.add(newAcc);
         userCount++;
         return newAcc.getId();
@@ -61,7 +60,7 @@ public class SocialMedia implements SocialMediaPlatform {
                 throw new InvalidHandleException("The handle you provided is incorect");
             }
         }
-        newAcc = new User(handle, description);
+        newAcc = new User(handle, description, this);
         allUsers.add(newAcc);
         userCount++;
         return newAcc.getId();
@@ -186,44 +185,12 @@ public class SocialMedia implements SocialMediaPlatform {
         for (Post post : allPosts) {
             if (post.getId() == id) {
                 for (User user : allUsers) {
-                    if (user.getHandle() == handle){
+                    if (user.getHandle() == handle) {
                         User author = user;
                         Endorsement newEndorsement = new Endorsement(author, post, this);
                         return newEndorsement.getId();
                     }
 
-                }
-                throw new HandleNotRecognisedException("The handle does not exist in the system");
-            }
-        }for (Comment comment : allComments) {
-            if (comment.getId() == id) {
-                throw new NotActionablePostException("The id you want to use is of a unactionable post");
-            }
-        }
-        for (Endorsement endorsement : allEndorsements) {
-            if (endorsement.getId() == id) {
-                throw new NotActionablePostException("The id you want to use is of a unactionable post");
-            }
-        }
-        throw new PostIDNotRecognisedException("The Post Id des nt exist in thne system");
-        
-    }
-
-    @Override
-    public int commentPost(String handle, int id, String message) throws HandleNotRecognisedException,
-            PostIDNotRecognisedException, NotActionablePostException, InvalidPostException {
-        // TODO Auto-generated method stub
-        if (message.length() > 100 || message == ""){
-            throw new InvalidPostException("The message you inputed is not valid");
-        }
-        for (Post post : allPosts) {
-            if (post.getId() == id) {
-                for (User user : allUsers) {
-                    if (user.getHandle() == handle){
-                        User author = post.getAuthor();
-                        Comment newComment = new Comment(author, message, post, this);
-                        return newComment.getId();
-                    }
                 }
                 throw new HandleNotRecognisedException("The handle does not exist in the system");
             }
@@ -238,8 +205,53 @@ public class SocialMedia implements SocialMediaPlatform {
                 throw new NotActionablePostException("The id you want to use is of a unactionable post");
             }
         }
-        throw new PostIDNotRecognisedException("The Post Id des nt exist in thne system");            
-        
+        throw new PostIDNotRecognisedException("The Post Id des nt exist in thne system");
+
+    }
+
+    @Override
+    public int commentPost(String handle, int id, String message) throws HandleNotRecognisedException,
+            PostIDNotRecognisedException, NotActionablePostException, InvalidPostException {
+        // TODO Auto-generated method stub
+        if (message.length() > 100 || message == "") {
+            throw new InvalidPostException("The message you inputed is not valid");
+        }
+        for (Post post : allPosts) {
+            if (post.getId() == id) {
+                for (User user : allUsers) {
+                    if (user.getHandle() == handle) {
+                        User author = post.getAuthor();
+                        Comment newComment = new Comment(author, message, post, this);
+                        newComment.originalPost = post;
+                        newComment.originalPost.totalNumberOfComments--;
+                        return newComment.getId();
+                    }
+                }
+                throw new HandleNotRecognisedException("The handle does not exist in the system");
+            }
+        }
+
+        for (Comment comment : allComments) {
+            if (comment.getId() == id) {
+                for (User user : allUsers) {
+                    if (user.getHandle() == handle) {
+                        User author = comment.getAuthor();
+                        Comment newComment = new Comment(author, message, comment, this);
+                        newComment.originalPost = comment.getOriginalPost();
+                        return newComment.getId();
+                    }
+                }
+                throw new HandleNotRecognisedException("The handle does not exist in the system");
+            }
+        }
+
+        for (Endorsement endorsement : allEndorsements) {
+            if (endorsement.getId() == id) {
+                throw new NotActionablePostException("The id you want to use is of a unactionable post");
+            }
+        }
+        throw new PostIDNotRecognisedException("The Post Id des nt exist in thne system");
+
     }
 
     @Override
@@ -288,28 +300,28 @@ public class SocialMedia implements SocialMediaPlatform {
     }
 
     @Override
-    public StringBuilder showPostChildrenDetails(int id) throws PostIDNotRecognisedException, NotActionablePostException {
+    public StringBuilder showPostChildrenDetails(int id)
+            throws PostIDNotRecognisedException, NotActionablePostException {
         StringBuilder sb = new StringBuilder();
         for (Post post : allPosts) {
             if (post.getId() == id) {
                 sb.append(showIndividualPost(id)).append("\n");
                 for (Post comment : allComments) {
-                    //classer par ordre croissant
+                    // classer par ordre croissant
                     sb.append(" | > ").append(showIndividualPost(comment.getId())).append("\n");
-                    }
                 }
             }
-            for (Endorsement endorsement : allEndorsements) {
-                if (endorsement.getId() == id) {
-                    throw new NotActionablePostException("The id you want to use is of a unactionable post");
-                }
-            }
-            if (sb.length() == 0) {
-                throw new PostIDNotRecognisedException("Post Id does not exist in the system");
-            }
-            return sb;
         }
-    
+        for (Endorsement endorsement : allEndorsements) {
+            if (endorsement.getId() == id) {
+                throw new NotActionablePostException("The id you want to use is of a unactionable post");
+            }
+        }
+        if (sb.length() == 0) {
+            throw new PostIDNotRecognisedException("Post Id does not exist in the system");
+        }
+        return sb;
+    }
 
     @Override
     public int getNumberOfAccounts() {
@@ -359,23 +371,43 @@ public class SocialMedia implements SocialMediaPlatform {
 
     @Override
     public void erasePlatform() {
-        // TODO Auto-generated method stub
+        this.allComments.clear();
+        this.allUsers.clear();
+        this.allPosts.clear();
+        this.allEndorsements.clear();
+
+        this.postCount = 0;
+        this.userCount = 0;
     }
 
     @Override
     public void savePlatform(String filename) throws IOException {
-        // TODO Auto-generated method stub
-
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
+            oos.writeObject(allUsers);
+            oos.writeObject(allPosts);
+            oos.writeObject(allComments);
+            oos.writeObject(allEndorsements);
+            oos.writeObject(userCount);
+            oos.writeObject(postCount);
+        }
     }
 
     @Override
     public void loadPlatform(String filename) throws IOException, ClassNotFoundException {
-        // TODO Auto-generated method stub
 
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(filename))) {
+            this.allUsers = (ArrayList<User>) in.readObject();
+            this.allPosts = (ArrayList<Post>) in.readObject();
+            this.allComments = (ArrayList<Comment>) in.readObject();
+            this.allEndorsements = (ArrayList<Endorsement>) in.readObject();
+
+            this.userCount = (int) in.readObject();
+            this.postCount = (int) in.readObject();
+        }
     }
 
-    static public int getUserCount() {
-        return userCount;
+    public int getUserCount() {
+        return this.userCount;
     }
 
     public int getPostCount() {
