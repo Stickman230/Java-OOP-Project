@@ -6,10 +6,9 @@ public class Post {
     int id;
     User author;
     String message;
-    static boolean canInteract = true;
+    int totalNumberOfComments = 0;
 
-    // TODO change the types of the list to endorsement and post.
-    ArrayList<Post> postEndorsments = new ArrayList<>();
+    ArrayList<Endorsement> postEndorsments = new ArrayList<>();
     ArrayList<Comment> postComments = new ArrayList<>();
 
     public int getId() {
@@ -21,7 +20,7 @@ public class Post {
     }
 
     public int getNumberOfComments() {
-        return this.postComments.size();
+        return this.totalNumberOfComments;
     }
 
     public Post(User author, String message, SocialMedia socialmedia) {
