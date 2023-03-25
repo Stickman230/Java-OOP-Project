@@ -273,10 +273,10 @@ public class SocialMedia implements SocialMediaPlatform {
         String output = "";
         for (Post post : allPosts) {
             if (post.getId() == id) {
-                output = "ID : " + id + "\nAccount : "
-                        + post.author.getHandle() + "\nNo of endorsements : "
-                        + post.getNumberOfEndorsments() + "\nNo of comments : "
-                        + post.getNumberOfComments() + "\nMessage : " + post.getMessage();
+                output = "ID: " + id + "\nAccount: "
+                        + post.author.getHandle() + "\nNo. endorsements: "
+                        + post.getNumberOfEndorsments() + " | No.comments: "
+                        + post.getNumberOfComments() + "\n " + post.getMessage();
                 break;
             }
         }
@@ -288,18 +288,35 @@ public class SocialMedia implements SocialMediaPlatform {
     }
 
     @Override
-    public StringBuilder showPostChildrenDetails(int id)
-            throws PostIDNotRecognisedException, NotActionablePostException {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    public StringBuilder showPostChildrenDetails(int id) throws PostIDNotRecognisedException, NotActionablePostException {
+        StringBuilder sb = new StringBuilder();
+        for (Post post : allPosts) {
+            if (post.getId() == id) {
+                sb.append(showIndividualPost(id)).append("\n");
+                for (Post comment : allComments) {
+                    //classer par ordre croissant
+                    sb.append(" | > ").append(showIndividualPost(comment.getId())).append("\n");
+                    }
+                }
+            }
+            for (Endorsement endorsement : allEndorsements) {
+                if (endorsement.getId() == id) {
+                    throw new NotActionablePostException("The id you want to use is of a unactionable post");
+                }
+            }
+            if (sb.length() == 0) {
+                throw new PostIDNotRecognisedException("Post Id does not exist in the system");
+            }
+            return sb;
+        }
+    
 
     @Override
     public int getNumberOfAccounts() {
         return allUsers.size();
     }
 
-   @Override
+    @Override
     public int getTotalOriginalPosts() {
         return allPosts.size();
     }
