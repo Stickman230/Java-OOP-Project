@@ -4,10 +4,10 @@ import java.io.*;
 import java.util.ArrayList;
 
 /**
- * SocialMedia is a minimally compiling, but non-functioning implementor of
+ * SocialMedia is a compiling and fully functioning implementor of
  * the SocialMediaPlatform interface.
  * 
- * @author Diogo Pachec
+ * @author Jeremy Shorter, Maxime Reynaud
  * @version 1.0
  */
 public class SocialMedia implements SocialMediaPlatform {
@@ -22,7 +22,6 @@ public class SocialMedia implements SocialMediaPlatform {
 
     @Override
     public int createAccount(String handle) throws IllegalHandleException, InvalidHandleException {
-        // TODO Auto-generated method stub
         User newAcc;
         for (User user : allUsers) {
             if (user.getHandle() == handle) {
@@ -45,7 +44,6 @@ public class SocialMedia implements SocialMediaPlatform {
 
     @Override
     public int createAccount(String handle, String description) throws IllegalHandleException, InvalidHandleException {
-        // TODO Store the list of users in the social media class.
         User newAcc;
         for (User user : allUsers) {
             if (user.getHandle() == handle) {
@@ -68,7 +66,6 @@ public class SocialMedia implements SocialMediaPlatform {
 
     @Override
     public void removeAccount(int id) throws AccountIDNotRecognisedException {
-        // TODO Auto-generated method stub
         for (User user : allUsers) {
             if (user.getId() == id) {
                 this.allUsers.remove(user);
@@ -82,7 +79,9 @@ public class SocialMedia implements SocialMediaPlatform {
                 for (Comment comm : user.userComments) {
                     comm.deleteComment();
                 }
-                // TODO Iterate through list of endorsements.
+                for (Endorsement endor : user.userEndorsements) {
+                    endor.deleteEndorsement();
+                }
             }
         }
         throw new AccountIDNotRecognisedException("Account Id does not exist in the system");
@@ -90,7 +89,6 @@ public class SocialMedia implements SocialMediaPlatform {
 
     @Override
     public void removeAccount(String handle) throws HandleNotRecognisedException {
-        // TODO Auto-generated method stub
         for (User user : allUsers) {
             if (user.getHandle() == handle) {
                 this.allUsers.remove(user);
@@ -105,7 +103,9 @@ public class SocialMedia implements SocialMediaPlatform {
                     comm.deleteComment();
                 }
 
-                // TODO Iterate through list of endorsements.
+                for (Endorsement endor : user.userEndorsements) {
+                    endor.deleteEndorsement();
+                }
             }
             throw new HandleNotRecognisedException("Handle does not exist in the system");
         }
@@ -212,7 +212,6 @@ public class SocialMedia implements SocialMediaPlatform {
     @Override
     public int commentPost(String handle, int id, String message) throws HandleNotRecognisedException,
             PostIDNotRecognisedException, NotActionablePostException, InvalidPostException {
-        // TODO Auto-generated method stub
         if (message.length() > 100 || message == "") {
             throw new InvalidPostException("The message you inputed is not valid");
         }
@@ -256,7 +255,6 @@ public class SocialMedia implements SocialMediaPlatform {
 
     @Override
     public void deletePost(int id) throws PostIDNotRecognisedException {
-        // TODO Auto-generated method stub
         for (Post post : allPosts) {
             if (post.getId() == id) {
                 try {
@@ -269,7 +267,9 @@ public class SocialMedia implements SocialMediaPlatform {
                     comm.message = "The original content was removed from the system and is no longer available.";
                     comm.originalPost = null;
                 }
-                // TODO ADD SAME FUNCTIONALITY FOR ENDORSEMENTS
+                for (Endorsement endor : post.postEndorsments) {
+                    endor.deleteEndorsement();
+                }
 
                 post.postComments.clear();
                 post.postEndorsments.clear();
@@ -305,7 +305,7 @@ public class SocialMedia implements SocialMediaPlatform {
         StringBuilder sb = new StringBuilder();
         for (Post post : allPosts) {
             if (post.getId() == id) {
-                showPost(post, -1, sb);               
+                showPost(post, -1, sb);
             }
         }
         for (Endorsement endorsement : allEndorsements) {
@@ -318,19 +318,19 @@ public class SocialMedia implements SocialMediaPlatform {
         }
         return sb;
     }
-    
+
     public void showPost(Post post, int depth, StringBuilder sb) {
         String out;
         depth++;
         String indent = "";
-        for (int i = 0; i < depth ; i++) {
-            indent+="\t";
+        for (int i = 0; i < depth; i++) {
+            indent += "\t";
         }
         out = indent + "ID: " + post.getId() + "\n" + indent + "Account: "
-        + post.author.getHandle() + "\n" + indent +"No. endorsements: "
-        + post.getNumberOfEndorsments() + " | No.comments: "
-        + post.getNumberOfComments() + "\n" + indent + post.getMessage()
-        + indent + "\n|\n" + indent + "| >";
+                + post.author.getHandle() + "\n" + indent + "No. endorsements: "
+                + post.getNumberOfEndorsments() + " | No.comments: "
+                + post.getNumberOfComments() + "\n" + indent + post.getMessage()
+                + indent + "\n|\n" + indent + "| >";
         sb.append(out);
         for (Comment comment : post.postComments) {
             showPost(comment, depth, sb);
@@ -410,13 +410,19 @@ public class SocialMedia implements SocialMediaPlatform {
     public void loadPlatform(String filename) throws IOException, ClassNotFoundException {
 
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(filename))) {
-            this.allUsers = (ArrayList<User>) in.readObject();
-            this.allPosts = (ArrayList<Post>) in.readObject();
-            this.allComments = (ArrayList<Comment>) in.readObject();
-            this.allEndorsements = (ArrayList<Endorsement>) in.readObject();
+            try {
+                this.allUsers = (ArrayList<User>) in.readObject();
+                this.allPosts = (ArrayList<Post>) in.readObject();
+                this.allComments = (ArrayList<Comment>) in.readObject();
+                this.allEndorsements = (ArrayList<Endorsement>) in.readObject();
+            } catch (ClassNotFoundException e) {
+                System.out.println("Class not found during deserialisation");
+            }
 
             this.userCount = (int) in.readObject();
             this.postCount = (int) in.readObject();
+        } catch (IOException e) {
+            System.out.println("IO Exception has occured. Unable to deserialise.");
         }
     }
 
