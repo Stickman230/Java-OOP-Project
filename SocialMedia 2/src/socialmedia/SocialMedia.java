@@ -305,11 +305,7 @@ public class SocialMedia implements SocialMediaPlatform {
         StringBuilder sb = new StringBuilder();
         for (Post post : allPosts) {
             if (post.getId() == id) {
-                sb.append(showIndividualPost(id)).append("\n");
-                for (Post comment : allComments) {
-                    // classer par ordre croissant
-                    sb.append(" | > ").append(showIndividualPost(comment.getId())).append("\n");
-                }
+                showPost(post, -1, sb);               
             }
         }
         for (Endorsement endorsement : allEndorsements) {
@@ -321,6 +317,24 @@ public class SocialMedia implements SocialMediaPlatform {
             throw new PostIDNotRecognisedException("Post Id does not exist in the system");
         }
         return sb;
+    }
+    
+    public void showPost(Post post, int depth, StringBuilder sb) {
+        String out;
+        depth++;
+        String indent = "";
+        for (int i = 0; i < depth ; i++) {
+            indent+="\t";
+        }
+        out = indent + "ID: " + post.getId() + "\n" + indent + "Account: "
+        + post.author.getHandle() + "\n" + indent +"No. endorsements: "
+        + post.getNumberOfEndorsments() + " | No.comments: "
+        + post.getNumberOfComments() + "\n" + indent + post.getMessage()
+        + indent + "\n|\n" + indent + "| >";
+        sb.append(out);
+        for (Comment comment : post.postComments) {
+            showPost(comment, depth, sb);
+        }
     }
 
     @Override
