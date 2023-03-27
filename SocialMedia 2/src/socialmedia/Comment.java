@@ -4,11 +4,11 @@ public class Comment extends Post {
     Post originalPost;
     Post pointer;
 
-    public Comment(User author, String message, Post original, SocialMedia socialmedia) {
+    public Comment(User author, String message, Post previous, SocialMedia socialmedia) {
         super(author, message, socialmedia);
-        this.pointer = original;
+        this.pointer = previous;
         this.message = message;
-        original.postComments.add(this);
+        previous.postComments.add(this);
         this.originalPost.totalNumberOfComments++;
         this.pointer.totalNumberOfComments++;
     }
