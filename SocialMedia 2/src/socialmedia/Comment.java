@@ -34,7 +34,8 @@ public class Comment extends Post {
         this.originalPost.postComments.remove(this);
         this.originalPost.totalNumberOfComments--;
     }
-    /** Method to get original post commenting on **/
+    /** Method to get original post commenting on 
+        @return the original post **/
     public Post getOriginalPost() {
         return this.originalPost;
     }
