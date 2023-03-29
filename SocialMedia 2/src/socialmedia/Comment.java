@@ -19,7 +19,7 @@ public class Comment extends Post {
       @param author the author of the comment
       @param message the message of the comment
       @param previous the previous post or comment you are commenting on
-      @param socialmedia **/
+      @param socialmedia the socialmedia object**/
     public Comment(User author, String message, Post previous, SocialMedia socialmedia) {
         super(author, message, socialmedia);
         this.pointer = previous;
