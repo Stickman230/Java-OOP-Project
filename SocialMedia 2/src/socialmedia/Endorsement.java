@@ -17,7 +17,7 @@ public class Endorsement extends Post {
     
     @param author author of the endorsment
     @param original the original post being endorsed
-    @param socialmedia **/
+    @param socialmedia the socialmedia object **/
     public Endorsement(User author, Post original, SocialMedia socialmedia) {
         super(author, "Empty Endorsement", socialmedia);
         this.originalPost = original;
