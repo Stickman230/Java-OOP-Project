@@ -2,6 +2,7 @@ package socialmedia;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * SocialMedia is a compiling and fully functioning implementor of
@@ -66,22 +67,35 @@ public class SocialMedia implements SocialMediaPlatform {
 
     @Override
     public void removeAccount(int id) throws AccountIDNotRecognisedException {
-        for (User user : allUsers) {
+        for (int i = 0; i < allUsers.size(); i++) {
+            User user = allUsers.get(i);
             if (user.getId() == id) {
-                this.allUsers.remove(user);
-                for (Post post : user.userPosts) {
+                for (int y = 0; y < user.userPosts.size(); y++) {
+                    Post post = user.userPosts.get(y);
+                    System.out.println(y);
                     try {
                         this.deletePost(post.getId());
                     } catch (PostIDNotRecognisedException e) {
                         System.out.println("Error when deleting posts associated to account");
+                        continue;
                     }
                 }
-                for (Comment comm : user.userComments) {
+
+                for (int y = 0; y < user.userComments.size(); y++) {
+                    Comment comm = user.userComments.get(y);
+                    System.out.println("Deleting comment...");
                     comm.deleteComment();
+                    user.userComments.remove(comm);
+                    y--;
                 }
-                for (Endorsement endor : user.userEndorsements) {
+
+                for (int y = 0; y < user.userEndorsements.size(); y++) {
+                    Endorsement endor = user.userEndorsements.get(y);
                     endor.deleteEndorsement();
                 }
+
+                this.allUsers.remove(user);
+                return;
             }
         }
         throw new AccountIDNotRecognisedException("Account Id does not exist in the system");
@@ -89,26 +103,38 @@ public class SocialMedia implements SocialMediaPlatform {
 
     @Override
     public void removeAccount(String handle) throws HandleNotRecognisedException {
-        for (User user : allUsers) {
+        for (int i = 0; i < allUsers.size(); i++) {
+            User user = allUsers.get(i);
             if (user.getHandle() == handle) {
-                this.allUsers.remove(user);
-                for (Post post : user.userPosts) {
+                for (int y = 0; y < user.userPosts.size(); y++) {
+                    Post post = user.userPosts.get(y);
+                    System.out.println(y);
                     try {
                         this.deletePost(post.getId());
                     } catch (PostIDNotRecognisedException e) {
                         System.out.println("Error when deleting posts associated to account");
+                        continue;
                     }
                 }
-                for (Comment comm : user.userComments) {
+
+                for (int y = 0; y < user.userComments.size(); y++) {
+                    Comment comm = user.userComments.get(y);
+                    System.out.println("Deleting comment...");
                     comm.deleteComment();
+                    user.userComments.remove(comm);
+                    y--;
                 }
 
-                for (Endorsement endor : user.userEndorsements) {
+                for (int y = 0; y < user.userEndorsements.size(); y++) {
+                    Endorsement endor = user.userEndorsements.get(y);
                     endor.deleteEndorsement();
                 }
+
+                this.allUsers.remove(user);
+                return;
             }
-            throw new HandleNotRecognisedException("Handle does not exist in the system");
         }
+        throw new HandleNotRecognisedException();
     }
 
     @Override
@@ -123,20 +149,27 @@ public class SocialMedia implements SocialMediaPlatform {
             }
         }
         for (User user : allUsers) {
-            if (oldHandle == user.getHandle()) {
-                user.handle = newHandle;
-            } else if (newHandle == user.getHandle()) {
+            if (newHandle.equals(user.getHandle())) {
                 throw new IllegalHandleException("Account handle already in the system");
             }
         }
+        System.out.println("Passed initial for loop");
+        for (User user : allUsers) {
+            if (oldHandle.equals(user.getHandle())) {
+                user.handle = newHandle;
+                return;
+            }
+        }
+        System.out.println("End");
         throw new HandleNotRecognisedException("Handle does not exist in the system");
     }
 
     @Override
     public void updateAccountDescription(String handle, String description) throws HandleNotRecognisedException {
         for (User user : allUsers) {
-            if (user.getHandle() == handle) {
+            if (user.getHandle().equals(handle)) {
                 user.description = description;
+                return;
             }
         }
         throw new HandleNotRecognisedException("Handle does not exist in the system");
@@ -146,11 +179,13 @@ public class SocialMedia implements SocialMediaPlatform {
     public String showAccount(String handle) throws HandleNotRecognisedException {
         String output = "";
         for (User user : allUsers) {
-            if (user.getHandle() == handle) {
+            if (user.getHandle().equals(handle)) {
+                System.out.println("REACHED");
                 output = "ID: " + user.getId() + "\nHandle: "
                         + user.getHandle() + "\nDescription: " + user.getDescription()
                         + "\nPost count: " + user.getNumberOfInteractions() + "\nEndorse count: "
                         + user.getReceivedEndorsment();
+
                 break;
             }
         }
@@ -205,7 +240,7 @@ public class SocialMedia implements SocialMediaPlatform {
                 throw new NotActionablePostException("The id you want to use is of a unactionable post");
             }
         }
-        throw new PostIDNotRecognisedException("The Post Id des nt exist in thne system");
+        throw new PostIDNotRecognisedException("The Post Id des nt exist in the system");
 
     }
 
@@ -219,10 +254,10 @@ public class SocialMedia implements SocialMediaPlatform {
             if (post.getId() == id) {
                 for (User user : allUsers) {
                     if (user.getHandle() == handle) {
-                        User author = post.getAuthor();
+                        User author = user;
                         Comment newComment = new Comment(author, message, post, this);
                         newComment.originalPost = post;
-                        newComment.originalPost.totalNumberOfComments--;
+                        newComment.originalPost.totalNumberOfComments++;
                         return newComment.getId();
                     }
                 }
@@ -237,6 +272,8 @@ public class SocialMedia implements SocialMediaPlatform {
                         User author = comment.getAuthor();
                         Comment newComment = new Comment(author, message, comment, this);
                         newComment.originalPost = comment.getOriginalPost();
+                        newComment.originalPost.totalNumberOfComments++;
+                        newComment.pointer.totalNumberOfComments++;
                         return newComment.getId();
                     }
                 }
@@ -249,16 +286,19 @@ public class SocialMedia implements SocialMediaPlatform {
                 throw new NotActionablePostException("The id you want to use is of a unactionable post");
             }
         }
-        throw new PostIDNotRecognisedException("The Post Id des nt exist in thne system");
+        throw new PostIDNotRecognisedException("The Post Id des nt exist in the system");
 
     }
 
     @Override
     public void deletePost(int id) throws PostIDNotRecognisedException {
-        for (Post post : allPosts) {
+        Iterator<Post> postIterator = allPosts.iterator();
+        while (postIterator.hasNext()) {
+            Post post = postIterator.next();
             if (post.getId() == id) {
+
                 try {
-                    this.allPosts.remove(post);
+                    postIterator.remove();
                     post.author.userPosts.remove(post);
                 } catch (Exception e) {
                     System.out.println("Exception caught: Post not found in System files.");
@@ -267,14 +307,14 @@ public class SocialMedia implements SocialMediaPlatform {
                     comm.message = "The original content was removed from the system and is no longer available.";
                     comm.originalPost = null;
                 }
-                for (Endorsement endor : post.postEndorsments) {
+                Iterator<Endorsement> endorIterator = post.postEndorsments.iterator();
+                while (endorIterator.hasNext()) {
+                    Endorsement endor = endorIterator.next();
+                    endorIterator.remove();
                     endor.deleteEndorsement();
                 }
-
                 post.postComments.clear();
-                post.postEndorsments.clear();
-
-                break;
+                return;
             }
         }
         throw new PostIDNotRecognisedException();
@@ -285,10 +325,19 @@ public class SocialMedia implements SocialMediaPlatform {
         String output = "";
         for (Post post : allPosts) {
             if (post.getId() == id) {
-                output = "ID: " + id + "\nAccount: "
+                output = "\nID: " + id + "\nAccount: "
                         + post.author.getHandle() + "\nNo. endorsements: "
                         + post.getNumberOfEndorsments() + " | No.comments: "
-                        + post.getNumberOfComments() + "\n " + post.getMessage();
+                        + post.getNumberOfComments() + "\n " + post.getMessage() + "\n";
+                break;
+            }
+        }
+        for (Comment comm : allComments) {
+            if (comm.getId() == id) {
+                output = "\nID: " + id + "\nAccount: "
+                        + comm.author.getHandle() + "\nNo. endorsements: "
+                        + comm.getNumberOfEndorsments() + " | No.comments: "
+                        + comm.getNumberOfComments() + "\n " + comm.getMessage() + "\n";
                 break;
             }
         }
@@ -318,24 +367,38 @@ public class SocialMedia implements SocialMediaPlatform {
         }
         return sb;
     }
-    
-    /** Method to be used by showPostChildrenDetails to print tree like comment structures
-        with no returns
-        @param post the originlal post
-        @param depth the number of comented comments folowing each other
-        @param sb the stringBuilder **/
+
+    /**
+     * Recursive method to be used by showPostChildrenDetails to print tree like
+     * comment structures while respecting indentation.
+     * 
+     * @param post  the originlal post
+     * @param depth the number of comments between a comment and the original post
+     * @param sb    the stringBuilder used in showPostChildrenDetails
+     **/
     public void showPost(Post post, int depth, StringBuilder sb) {
-        String out;
+        String out = "";
         depth++;
         String indent = "";
         for (int i = 0; i < depth; i++) {
             indent += "\t";
         }
-        out = indent + "ID: " + post.getId() + "\n" + indent + "Account: "
-                + post.author.getHandle() + "\n" + indent + "No. endorsements: 
-                + post.getNumberOfEndorsments() + " | No.comments: "
-                + post.getNumberOfComments() + "\n" + indent + post.getMessage()
-                + indent + "\n|\n" + indent + "| >";
+
+        if (depth > 0) {
+            out = "\t" + "ID: " + post.getId() + "\n" + indent + "Account: "
+                    + post.author.getHandle() + "\n" + indent + "No. endorsements: "
+                    + post.getNumberOfEndorsments() + " | No.comments: "
+                    + post.getNumberOfComments() + "\n" + indent + post.getMessage() + "\n";
+
+        } else {
+            out = "\nID: " + post.getId() + "\n" + indent + "Account: "
+                    + post.author.getHandle() + "\n" + indent + "No. endorsements: "
+                    + post.getNumberOfEndorsments() + " | No.comments: "
+                    + post.getNumberOfComments() + "\n" + indent + post.getMessage() + "\n";
+        }
+        if (!post.isLast) {
+            out += indent + "|" + "\n" + indent + "| >";
+        }
         sb.append(out);
         for (Comment comment : post.postComments) {
             showPost(comment, depth, sb);
@@ -401,17 +464,31 @@ public class SocialMedia implements SocialMediaPlatform {
 
     @Override
     public void savePlatform(String filename) throws IOException {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
+        ObjectOutputStream oos = null;
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(filename);
+            oos = new ObjectOutputStream(fos);
             oos.writeObject(allUsers);
             oos.writeObject(allPosts);
             oos.writeObject(allComments);
             oos.writeObject(allEndorsements);
             oos.writeObject(userCount);
             oos.writeObject(postCount);
+        } catch (IOException e) {
+            System.out.println("IOException thrown while trying to deserialise platform");
+        } finally {
+            if (oos != null) {
+                oos.close();
+            }
+            if (fos != null) {
+                fos.close();
+            }
         }
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void loadPlatform(String filename) throws IOException, ClassNotFoundException {
 
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(filename))) {
@@ -427,16 +504,24 @@ public class SocialMedia implements SocialMediaPlatform {
             this.userCount = (int) in.readObject();
             this.postCount = (int) in.readObject();
         } catch (IOException e) {
-            System.out.println("IO Exception has occured. Unable to deserialise.");
+            System.out.println("IO Exception thrown while attempting to deserialise.");
         }
     }
-    /** Method used to get the user count on the platform
-        @return the number of active users **/
+
+    /**
+     * Method used to get the next available unique User id on the platform
+     * 
+     * @return next available id
+     **/
     public int getUserCount() {
         return this.userCount;
     }
-     /** Method used to get the post count on the platform
-         @return the number of active posts **/
+
+    /**
+     * Method used to get the next available unique Post id on the platform
+     * 
+     * @return the next available id
+     **/
     public int getPostCount() {
         return this.postCount;
     }
