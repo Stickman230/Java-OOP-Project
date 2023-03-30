@@ -72,7 +72,7 @@ public class SocialMedia implements SocialMediaPlatform {
             if (user.getId() == id) {
                 for (int y = 0; y < user.userPosts.size(); y++) {
                     Post post = user.userPosts.get(y);
-                    System.out.println(y);
+
                     try {
                         this.deletePost(post.getId());
                     } catch (PostIDNotRecognisedException e) {
@@ -83,7 +83,6 @@ public class SocialMedia implements SocialMediaPlatform {
 
                 for (int y = 0; y < user.userComments.size(); y++) {
                     Comment comm = user.userComments.get(y);
-                    System.out.println("Deleting comment...");
                     comm.deleteComment();
                     user.userComments.remove(comm);
                     y--;
@@ -108,7 +107,6 @@ public class SocialMedia implements SocialMediaPlatform {
             if (user.getHandle() == handle) {
                 for (int y = 0; y < user.userPosts.size(); y++) {
                     Post post = user.userPosts.get(y);
-                    System.out.println(y);
                     try {
                         this.deletePost(post.getId());
                     } catch (PostIDNotRecognisedException e) {
@@ -119,7 +117,6 @@ public class SocialMedia implements SocialMediaPlatform {
 
                 for (int y = 0; y < user.userComments.size(); y++) {
                     Comment comm = user.userComments.get(y);
-                    System.out.println("Deleting comment...");
                     comm.deleteComment();
                     user.userComments.remove(comm);
                     y--;
@@ -150,17 +147,15 @@ public class SocialMedia implements SocialMediaPlatform {
         }
         for (User user : allUsers) {
             if (newHandle.equals(user.getHandle())) {
-                throw new IllegalHandleException("Account handle already in the system");
+                throw new IllegalHandleException("New account handle already in the system");
             }
         }
-        System.out.println("Passed initial for loop");
         for (User user : allUsers) {
             if (oldHandle.equals(user.getHandle())) {
                 user.handle = newHandle;
                 return;
             }
         }
-        System.out.println("End");
         throw new HandleNotRecognisedException("Handle does not exist in the system");
     }
 
@@ -180,7 +175,6 @@ public class SocialMedia implements SocialMediaPlatform {
         String output = "";
         for (User user : allUsers) {
             if (user.getHandle().equals(handle)) {
-                System.out.println("REACHED");
                 output = "ID: " + user.getId() + "\nHandle: "
                         + user.getHandle() + "\nDescription: " + user.getDescription()
                         + "\nPost count: " + user.getNumberOfInteractions() + "\nEndorse count: "
@@ -200,7 +194,7 @@ public class SocialMedia implements SocialMediaPlatform {
     @Override
     public int createPost(String handle, String message) throws HandleNotRecognisedException, InvalidPostException {
         if (message == "" || message.length() > 100) {
-            throw new InvalidPostException("The messsage you tried to put is not allowed");
+            throw new InvalidPostException("The messsage you tried to post is not allowed");
         }
         for (User user : allUsers) {
             if (user.getHandle() == handle) {
@@ -232,12 +226,12 @@ public class SocialMedia implements SocialMediaPlatform {
         }
         for (Comment comment : allComments) {
             if (comment.getId() == id) {
-                throw new NotActionablePostException("The id you want to use is of a unactionable post");
+                throw new NotActionablePostException("The id you want to use is of an unactionable post");
             }
         }
         for (Endorsement endorsement : allEndorsements) {
             if (endorsement.getId() == id) {
-                throw new NotActionablePostException("The id you want to use is of a unactionable post");
+                throw new NotActionablePostException("The id you want to use is of an unactionable post");
             }
         }
         throw new PostIDNotRecognisedException("The Post Id des nt exist in the system");
@@ -283,10 +277,10 @@ public class SocialMedia implements SocialMediaPlatform {
 
         for (Endorsement endorsement : allEndorsements) {
             if (endorsement.getId() == id) {
-                throw new NotActionablePostException("The id you want to use is of a unactionable post");
+                throw new NotActionablePostException("The id you want to use is of an unactionable post");
             }
         }
-        throw new PostIDNotRecognisedException("The Post Id des nt exist in the system");
+        throw new PostIDNotRecognisedException("The Post Id des not exist in the system");
 
     }
 
