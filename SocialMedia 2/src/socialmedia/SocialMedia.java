@@ -318,7 +318,12 @@ public class SocialMedia implements SocialMediaPlatform {
         }
         return sb;
     }
-
+    
+    /** Method to be used by showPostChildrenDetails to print tree like comment structures
+        with no returns
+        @param post the originlal post
+        @param depth the number of comented comments folowing each other
+        @param sb the stringBuilder **/
     public void showPost(Post post, int depth, StringBuilder sb) {
         String out;
         depth++;
@@ -327,7 +332,7 @@ public class SocialMedia implements SocialMediaPlatform {
             indent += "\t";
         }
         out = indent + "ID: " + post.getId() + "\n" + indent + "Account: "
-                + post.author.getHandle() + "\n" + indent + "No. endorsements: "
+                + post.author.getHandle() + "\n" + indent + "No. endorsements: 
                 + post.getNumberOfEndorsments() + " | No.comments: "
                 + post.getNumberOfComments() + "\n" + indent + post.getMessage()
                 + indent + "\n|\n" + indent + "| >";
@@ -425,11 +430,13 @@ public class SocialMedia implements SocialMediaPlatform {
             System.out.println("IO Exception has occured. Unable to deserialise.");
         }
     }
-
+    /** Method used to get the user count on the platform
+        @return the number of active users **/
     public int getUserCount() {
         return this.userCount;
     }
-
+     /** Method used to get the post count on the platform
+         @return the number of active posts **/
     public int getPostCount() {
         return this.postCount;
     }
